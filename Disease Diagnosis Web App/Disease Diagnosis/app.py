@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 25 09:20:13 2023
 
-import os
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-def p(file_name):
-    return os.path.join(BASE_DIR, file_name)
-
+@author: piku
+"""
 
 import joblib
 from flask import Flask, render_template, redirect, url_for, request
@@ -20,41 +17,34 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import pandas as pd
 import pickle
 import numpy as np
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 
 import nltk
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 
-# from keras.models import load_model
-# model2 = load_model(p("model.h5"))
+from keras.models import load_model
+model2 = load_model('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\model.h5')
 
-# # model2 = load_model('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\model.h5')
+import json
+import random
+intents = json.loads(open('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\data.json').read())
+words = pickle.load(open('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\texts.pkl','rb'))
+classes = pickle.load(open('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\labels.pkl','rb'))
 
-# import json
-# import random
-
-# intents = json.loads(open(p("data.json")).read())
-
-
-
-# words = pickle.load(open(p("texts.pkl"), "rb"))
-
-# classes = pickle.load(open(p("labels.pkl"), "rb"))
 
 ###############################################################################
 
 
-# filename = 'diabetes-prediction-rfc-model.pkl'
-# classifier = pickle.load(open(filename, 'rb'))
+filename = 'diabetes-prediction-rfc-model.pkl'
+classifier = pickle.load(open(filename, 'rb'))
 model = pickle.load(open('model.pkl', 'rb'))
 model1 = pickle.load(open('model1.pkl', 'rb'))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + p("database.db")
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/piku/OneDrive/Desktop/Disease Diagnosis System cloud/Disease Diagnosis/database.db'
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -144,15 +134,15 @@ def dashboard():
 def disindex():
     return render_template("disindex.html")
 
-# @app.route('/chatbot')
-# @login_required
-# def chatbot():
-#     return render_template("chatbot.html")
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    return render_template("chatbot.html")
 
-# @app.route("/get")
-# def get_bot_response():
-#     userText = request.args.get('msg')
-#     return chatbot_response(userText)
+@app.route("/get")
+def get_bot_response():
+    userText = request.args.get('msg')
+    return chatbot_response(userText)
 
 @app.route("/cancer")
 @login_required
@@ -255,8 +245,8 @@ def predict():
 
 
 ##################################################################################
-df1 = pd.read_csv(p("diabetes.csv"))
 
+df1 = pd.read_csv('diabetes.csv')
 
 # Renaming DiabetesPedigreeFunction as DPF
 df1 = df1.rename(columns={'DiabetesPedigreeFunction': 'DPF'})
