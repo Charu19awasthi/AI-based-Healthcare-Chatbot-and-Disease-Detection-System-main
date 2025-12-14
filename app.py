@@ -20,34 +20,42 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import pandas as pd
 import pickle
 import numpy as np
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+import pickle
+from sklearn.neighbors import KNeighborsClassifier
+
+# model1 = KNeighborsClassifier()
+# # model1.fit(X_train, y_train)   # Apna training code
+# pickle.dump(model1, open('model1.pkl', 'wb'))
+
 
 import nltk
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 
-# from keras.models import load_model
-# model2 = load_model(p("model.h5"))
+from keras.models import load_model
+model2 = load_model(p("model.h5"))
 
-# # model2 = load_model('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\model.h5')
+# model2 = load_model('C:\\Users\\piku\\OneDrive\\Desktop\\Disease Diagnosis System cloud\\Disease Diagnosis\\model.h5')
 
-# import json
-# import random
+import json
+import random
 
-# intents = json.loads(open(p("data.json")).read())
+intents = json.loads(open(p("data.json")).read())
 
 
 
-# words = pickle.load(open(p("texts.pkl"), "rb"))
+words = pickle.load(open(p("texts.pkl"), "rb"))
 
-# classes = pickle.load(open(p("labels.pkl"), "rb"))
+classes = pickle.load(open(p("labels.pkl"), "rb"))
 
 ###############################################################################
 
 
-# filename = 'diabetes-prediction-rfc-model.pkl'
+# filename = p("diabetes-prediction-rfc-model.pkl")
 # classifier = pickle.load(open(filename, 'rb'))
+
 model = pickle.load(open('model.pkl', 'rb'))
 model1 = pickle.load(open('model1.pkl', 'rb'))
 
@@ -144,15 +152,15 @@ def dashboard():
 def disindex():
     return render_template("disindex.html")
 
-# @app.route('/chatbot')
-# @login_required
-# def chatbot():
-#     return render_template("chatbot.html")
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    return render_template("chatbot.html")
 
-# @app.route("/get")
-# def get_bot_response():
-#     userText = request.args.get('msg')
-#     return chatbot_response(userText)
+@app.route("/get")
+def get_bot_response():
+    userText = request.args.get('msg')
+    return chatbot_response(userText)
 
 @app.route("/cancer")
 @login_required
@@ -263,9 +271,7 @@ df1 = df1.rename(columns={'DiabetesPedigreeFunction': 'DPF'})
 
 # Replacing the 0 values from ['Glucose','BloodPressure','SkinThickness','Insulin','BMI'] by NaN
 df_copy = df1.copy(deep=True)
-df_copy[['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']] = df_copy[['Glucose', 'BloodPressure',
-                                                                                    'SkinThickness', 'Insulin',
-                                                                                    'BMI']].replace(0, np.NaN)
+df_copy[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']] = df_copy[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']].replace(0, np.nan)
 
 # Replacing NaN value by mean, median depending upon distribution
 df_copy['Glucose'].fillna(df_copy['Glucose'].mean(), inplace=True)
